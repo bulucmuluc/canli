@@ -5,13 +5,6 @@
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from utils import (
     play, 
     start_stream,
@@ -38,18 +31,18 @@ async def main():
     if Config.DATABASE_URI:
         try:
             if await db.is_saved("RESTART"):
-                msg=await db.get_config("RESTART")
+                msg = await db.get_config("RESTART")
                 if msg:
                     try:
-                        k=await bot.edit_message_text(msg['chat_id'], msg['msg_id'], text="Succesfully restarted.")
+                        k = await bot.edit_message_text(msg['chat_id'], msg['msg_id'], text="Successfully restarted.")
                         await db.del_config("RESTART")
                     except:
                         pass
             await check_changes()
             await sync_from_db()
         except Exception as e:
-            LOGGER.error(f"Errors occured while setting up database for VCPlayerBot, check the value of DATABASE_URI. Full error - {str(e)}", exc_info=True)
-            Config.STARTUP_ERROR="Errors occured while setting up database for VCPlayerBot, check the value of DATABASE_URI. Full error - {str(e)}"
+            LOGGER.error(f"Errors occurred while setting up database for VCPlayerBot, check the value of DATABASE_URI. Full error - {str(e)}", exc_info=True)
+            Config.STARTUP_ERROR = "Errors occurred while setting up database for VCPlayerBot, check the value of DATABASE_URI. Full error - {str(e)}"
             LOGGER.info("Activating debug mode, you can reconfigure your bot with /env command.")
             await bot.stop()
             from utils import debug
@@ -59,7 +52,7 @@ async def main():
 
     if Config.DEBUG:
         LOGGER.info("Debugging enabled by user, Now in debug mode.")
-        Config.STARTUP_ERROR="Debugging enabled by user, Now in debug mode."
+        Config.STARTUP_ERROR = "Debugging enabled by user, Now in debug mode."
         from utils import debug
         await bot.stop()
         await debug.start()
@@ -69,9 +62,9 @@ async def main():
     try:
         await group_call.start()
         Config.USER_ID = (await USER.get_me()).id
-        k=await startup_check()
+        k = await startup_check()
         if k == False:
-            LOGGER.error("Startup checks not passed , bot is quiting")
+            LOGGER.error("Startup checks not passed, bot is quitting.")
             await bot.stop()
             LOGGER.info("Activating debug mode, you can reconfigure your bot with /env command.")
             from utils import debug
@@ -84,17 +77,17 @@ async def main():
                 await play()
                 LOGGER.info("Loop play enabled and playlist is not empty, resuming playlist.")
             else:
-                LOGGER.info("Loop play enabled , starting playing startup stream.")
+                LOGGER.info("Loop play enabled, starting playing startup stream.")
                 await start_stream()
     except Exception as e:
         if "unpack requires" in str(e):
-            LOGGER.error("You Have to generate a new session string from the link given in README of the repo and replace the existing one with the new.")
+            LOGGER.error("You have to generate a new session string from the link given in README of the repo and replace the existing one with the new.")
             LOGGER.info("Activating debug mode, you can reconfigure your bot with /env command.")
-            Config.STARTUP_ERROR=f"You Have to generate a new session string from the link given in README of the repo and replace the existing one with the new. \nGenerate string session from https://repl.it/@subinps/getStringName"
+            Config.STARTUP_ERROR = f"You have to generate a new session string from the link given in README of the repo and replace the existing one with the new. \nGenerate string session from https://repl.it/@subinps/getStringName"
         else:
-            LOGGER.error(f"Startup was unsuccesfull, Errors - {e}", exc_info=True)
+            LOGGER.error(f"Startup was unsuccessful, Errors - {e}", exc_info=True)
             LOGGER.info("Activating debug mode, you can reconfigure your bot with /env command.")
-            Config.STARTUP_ERROR=f"Startup was unsuccesfull, Errors - {e}"
+            Config.STARTUP_ERROR = f"Startup was unsuccessful, Errors - {e}"
         from utils import debug
         await bot.stop()
         await debug.start()
@@ -106,6 +99,3 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.get_event_loop().run_until_complete(main())
-
-
-
